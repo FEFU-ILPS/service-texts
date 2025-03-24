@@ -2,6 +2,8 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
+from database import disconnect_db
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -10,6 +12,7 @@ async def lifespan(app: FastAPI):
     yield
 
     # on_shutdown
+    disconnect_db()
 
 
 service = FastAPI(lifespan=lifespan)
