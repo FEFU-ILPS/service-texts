@@ -9,7 +9,7 @@ from database import get_db
 from database.models import LearningText
 from schemas.texts import LearningTextResponse, DetailLearningTextResponse
 
-router = APIRouter()
+router = APIRouter(prefix="/texts")
 
 
 @router.get("/", summary="Получить список всех текстов")
