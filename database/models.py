@@ -1,7 +1,7 @@
 import uuid
 
-from sqlalchemy import Column, Index, Text, Integer, CheckConstraint, String
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy import Column, Index, Text, CheckConstraint, String
+from sqlalchemy.dialects.postgresql import UUID, SMALLINT
 
 from .engine import BaseORM
 
@@ -13,7 +13,7 @@ class LearningText(BaseORM):
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     title = Column(String(100), nullable=False, unique=True)
-    difficulty = Column(Integer, nullable=True, unique=False)
+    difficulty = Column(SMALLINT, nullable=True, unique=False)
     preview = Column(String(500), nullable=True, unique=False)
     value = Column(Text, nullable=False, unique=False)
     transcription = Column(Text, nullable=False, unique=False)
