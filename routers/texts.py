@@ -12,7 +12,7 @@ from schemas.texts import LearningTextResponse, DetailLearningTextResponse
 router = APIRouter()
 
 
-@router.get("", summary="Получить список всех текстов")
+@router.get("/", summary="Получить список всех текстов")
 async def get_texts(db: AsyncSession = Depends(get_db)) -> List[LearningTextResponse]:
     """Возвращает полный список всех обучающих текстов с краткой информацией."""
     stmt = select(LearningText)
