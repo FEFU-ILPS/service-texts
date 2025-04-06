@@ -4,10 +4,10 @@ import platform
 import socket
 import datetime
 
-router = APIRouter()
+router = APIRouter(prefix="/health")
 
 
-@router.get(path="/health", summary="Health Check", tags=["Health"])
+@router.get(path="", summary="Health Check", tags=["Health"])
 async def health_check() -> JSONResponse:
     """Подтверждает работоспособность сервиса, отправляя данные о текущей хост-системе."""
     try:
