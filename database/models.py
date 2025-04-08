@@ -13,7 +13,7 @@ class LearningText(BaseORM):
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     title = Column(String(100), nullable=False, unique=True)
-    difficulty = Column(SMALLINT, nullable=True, unique=False)
+    difficulty = Column(SMALLINT, nullable=False, default=0, unique=False)
     preview = Column(String(500), nullable=True, unique=False)
     value = Column(Text, nullable=False, unique=False)
     transcription = Column(Text, nullable=False, unique=False)
