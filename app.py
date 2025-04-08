@@ -13,7 +13,7 @@ async def lifespan(app: FastAPI):
     yield
 
     # on_shutdown
-    disconnect_db()
+    await disconnect_db()
 
 
 service = FastAPI(lifespan=lifespan)
