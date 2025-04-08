@@ -7,7 +7,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from database import get_db
 from database.models import LearningText
-from schemas.texts import LearningTextResponse, DetailLearningTextResponse
+from schemas.texts import (
+    LearningTextResponse,
+    DetailLearningTextResponse,
+    DeleteLearningTextResponse,
+)
 
 router = APIRouter()
 
@@ -39,3 +43,25 @@ async def get_text(
         )
 
     return DetailLearningTextResponse.model_validate(text)
+
+
+@router.delete("/{uuid}", summary="Удалить текст из системы")
+async def delete_text(
+    uuid: Annotated[UUID, Path(...)],
+    db: AsyncSession = Depends(get_db),
+) -> DeleteLearningTextResponse:
+    """Удаляет текст из системы по его UUID."""
+    stmt = select(LearningText).where(LearningText.id == uuid)
+    result = await db.execute(stmt)
+    text = result.scalar_one_or_none()
+
+    if text is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Text not found.",
+        )
+
+    await db.delete(text)
+    await db.commit()
+
+    return DeleteLearningTextResponse.model_validate(text)

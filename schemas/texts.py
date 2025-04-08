@@ -24,7 +24,8 @@ class CreateLearningTextResponse(BaseModel):
 
 
 class DeleteLearningTextResponse(BaseModel):
-    pass
+    id: Annotated[UUID, Field(..., description="Уникальный идентификатор")]
+    title: Annotated[str, Field(max_length=100, description="Название")]
 
 
 class UpdateLearningTextRequest(BaseModel):
