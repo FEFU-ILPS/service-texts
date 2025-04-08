@@ -1,6 +1,7 @@
-from pydantic import BaseModel, Field
 from typing import Annotated, Optional
 from uuid import UUID
+
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class LearningTextResponse(BaseModel):
@@ -33,6 +34,8 @@ class CreateLearningTextRequest(BaseModel):
 
 class CreateLearningTextResponse(BaseModel):
     """Данные, отправляемые в ответ на запрос добавления текста."""
+
+    model_config = ConfigDict(from_attributes=True)
 
     id: Annotated[UUID, Field(..., description="Уникальный идентификатор")]
 
