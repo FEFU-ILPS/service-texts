@@ -14,6 +14,8 @@ from schemas.texts import (
     DeleteLearningTextResponse,
     DetailLearningTextResponse,
     LearningTextResponse,
+    UpdateLearningTextRequest,
+    UpdateLearningTextResponse,
 )
 
 router = APIRouter()
@@ -104,3 +106,46 @@ async def delete_text(
     await db.commit()
 
     return DeleteLearningTextResponse.model_validate(text)
+
+
+@router.patch("/{uuid}", summary="Обновить данные о тексте")
+async def update_text(
+    uuid: Annotated[UUID, Path(...)],
+    data: Annotated[UpdateLearningTextRequest, Body(...)],
+    db: AsyncSession = Depends(get_db),
+) -> UpdateLearningTextResponse:
+    """Обновляет данные текста по его UUID."""
+    stmt = select(LearningText).where(LearningText.id == uuid)
+    result = await db.execute(stmt)
+    text = result.scalar_one_or_none()
+
+    if text is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Text not found.",
+        )
+
+    try:
+        data = data.model_dump(exclude_none=True)
+        for field in data:
+            setattr(text, field, data[field])
+
+        db.add(text)
+        await db.commit()
+        await db.refresh(text)
+
+    except IntegrityError:
+        await db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"{LearningText.__name__} with this data already exists.",
+        )
+
+    except Exception:
+        await db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"An error ocured while updating {LearningText.__name__}.",
+        )
+
+    return UpdateLearningTextResponse.model_validate(text)
