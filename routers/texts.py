@@ -8,7 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from database import get_db
 from database.models import LearningText
-from schemas.texts import (
+from schemas import (
     CreateLearningTextRequest,
     CreateLearningTextResponse,
     DeleteLearningTextResponse,
