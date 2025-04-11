@@ -2,8 +2,7 @@ from datetime import date, datetime
 from enum import Enum
 from typing import Annotated, Generic, Optional, TypeVar, Union
 
-from fastapi import Query
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, Field, field_validator
 
 # SearchFields
 _SF = TypeVar("_SF", bound=Union[str, Enum])
@@ -43,17 +42,17 @@ class SearchMode(str, Enum):
 class ListingPagination(BaseModel):
     """Предоставляет группу query-параметров для пагинации в листинге."""
 
-    skip: Annotated[int, Query(0, ge=0, example=0, description="Skipping entries")]
-    limit: Annotated[int, Query(50, le=200, example=50, description="Total entries")]
+    skip: Annotated[int, Field(0, ge=0, example=0, description="Skipping entries")]
+    limit: Annotated[int, Field(50, le=200, example=50, description="Total entries")]
 
 
 class ListingSearch(BaseModel, Generic[_SF]):
     """Предоставляет группу query-параметров для поиска в листинге."""
 
-    search_by: Annotated[Optional[_SF], Query(None, description="Search field")]
-    search_mode: Annotated[SearchMode, Query(SearchMode.EQ, description="Search Mode")]
+    search_by: Annotated[Optional[_SF], Field(None, description="Search field")]
+    search_mode: Annotated[SearchMode, Field(SearchMode.EQ, description="Search Mode")]
     search_value: Annotated[
-        Optional[Union[str, int, float, date]], Query(None, description="Search value")
+        Optional[Union[str, int, float, date]], Field(None, description="Search value")
     ]
 
     @field_validator("search_value")
@@ -77,5 +76,5 @@ class ListingSearch(BaseModel, Generic[_SF]):
 class ListingSort(BaseModel, Generic[_OF]):
     """Предоставляет группу query-параметров для сортировки в листинге."""
 
-    sort_by: Annotated[Optional[_OF], Query(None, description="Sorting field")]
-    sort_order: Annotated[SortOrder, Query(SortOrder.ASC, description="Sorting order")]
+    sort_by: Annotated[Optional[_OF], Field(None, description="Sorting field")]
+    sort_order: Annotated[SortOrder, Field(SortOrder.ASC, description="Sorting order")]

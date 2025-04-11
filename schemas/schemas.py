@@ -1,8 +1,8 @@
 from typing import Annotated, Optional
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict
 from fastapi import Body
+from pydantic import BaseModel, ConfigDict, Field
 
 from .examples import (
     DIFFICULTY_EXAMPLES,
@@ -13,18 +13,18 @@ from .examples import (
     VALUE_EXAMPLES,
 )
 
-TextID = Annotated[UUID, Body(description="Уникальный идентификатор", examples=ID_EXAMPLES)]
-TextTitle = Annotated[str, Body(max_length=100, description="Название", examples=TITLE_EXAMPLES)]
-TextValue = Annotated[str, Body(description="Содержание", examples=VALUE_EXAMPLES)]
+TextID = Annotated[UUID, Field(description="Уникальный идентификатор", examples=ID_EXAMPLES)]
+TextTitle = Annotated[str, Field(max_length=100, description="Название", examples=TITLE_EXAMPLES)]
+TextValue = Annotated[str, Field(description="Содержание", examples=VALUE_EXAMPLES)]
 
 TextPreview = Annotated[
-    str, Body(max_length=500, description="Краткое описание", examples=PREVIEW_EXAMPLES)
+    str, Field(max_length=500, description="Краткое описание", examples=PREVIEW_EXAMPLES)
 ]
 TextDifficulty = Annotated[
-    int, Body(ge=0, le=10, description="Сложность", examples=DIFFICULTY_EXAMPLES)
+    int, Field(ge=0, le=10, description="Сложность", examples=DIFFICULTY_EXAMPLES)
 ]
 TextTranscription = Annotated[
-    str, Body(description="Транскрипционная запись", examples=TRANSCRIPTION_EXAMPLES)
+    str, Field(description="Транскрипционная запись", examples=TRANSCRIPTION_EXAMPLES)
 ]
 
 
