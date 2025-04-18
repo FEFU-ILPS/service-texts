@@ -49,7 +49,7 @@ async def get_texts(
     texts = result.scalars().all()
 
     # Если задан поиск по полю
-    if search and search.search_by:
+    if search.search_by:
         column = getattr(LearningText, search.search_by)
         opreator = search.search_mode.get_operator()
         condition = build_search_condition(
@@ -60,13 +60,12 @@ async def get_texts(
         stmt = stmt.where(condition)
 
     # Если задана сортировка по полю
-    if sort and sort.sort_by:
+    if sort.sort_by:
         ordering = desc(sort.sort_by) if sort.sort_order == SortOrder.DESC else asc(sort.sort_by)
         stmt = stmt.order_by(ordering)
 
-    # Если задана пагинация
-    if pagination:
-        stmt = stmt.offset(pagination.skip).limit(pagination.limit)
+    # Пагинация всегда задана по дефолту
+    stmt = stmt.offset(pagination.skip).limit(pagination.limit)
 
     result = await db.execute(stmt)
     texts = result.scalars().all()
