@@ -102,8 +102,6 @@ async def create_text(
     try:
         text = LearningText(
             title=data.title,
-            difficulty=data.difficulty,
-            preview=data.preview,
             value=data.value,
             transcription=data.transcription,
         )
