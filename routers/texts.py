@@ -1,9 +1,8 @@
-from enum import Enum
 from typing import Annotated, List
 from uuid import UUID
 
 from fastapi import APIRouter, Body, Depends, HTTPException, Path, status
-from sqlalchemy import asc, desc, select
+from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -19,53 +18,16 @@ from schemas import (
     UpdateLearningTextResponse,
 )
 
-from .utils.query_params import ListingPagination, ListingSearch, ListingSort, SortOrder
-from .utils.sqlalchemy import build_search_condition
 
 router = APIRouter()
 
 
-class SortFields(str, Enum):
-    TITLE = "title"
-    DIFFICULTY = "difficulty"
-
-
-class SearchFields(str, Enum):
-    TITLE = "title"
-    DIFFICULTY = "difficulty"
-    PREVIEW = "preview"
-
-
 @router.get("/", summary="Получить список всех текстов")
-async def get_texts(
-    search: ListingSearch[SearchFields] = Depends(),
-    sort: ListingSort[SortFields] = Depends(),
-    pagination: ListingPagination = Depends(),
-    db: AsyncSession = Depends(get_db),
-) -> List[LearningTextResponse]:
+async def get_texts(db: AsyncSession = Depends(get_db)) -> List[LearningTextResponse]:
     """Возвращает полный список всех обучающих текстов с краткой информацией."""
     stmt = select(LearningText)
     result = await db.execute(stmt)
     texts = result.scalars().all()
-
-    # Если задан поиск по полю
-    if search.search_by:
-        column = getattr(LearningText, search.search_by)
-        opreator = search.search_mode.get_operator()
-        condition = build_search_condition(
-            column=column,
-            operator=opreator,
-            search_value=search.search_value,
-        )
-        stmt = stmt.where(condition)
-
-    # Если задана сортировка по полю
-    if sort.sort_by:
-        ordering = desc(sort.sort_by) if sort.sort_order == SortOrder.DESC else asc(sort.sort_by)
-        stmt = stmt.order_by(ordering)
-
-    # Пагинация всегда задана по дефолту
-    stmt = stmt.offset(pagination.skip).limit(pagination.limit)
 
     result = await db.execute(stmt)
     texts = result.scalars().all()
