@@ -2,7 +2,6 @@ from typing import Generic, TypeVar
 
 from pydantic import BaseModel, Field, computed_field
 
-
 M = TypeVar("M", bound=BaseModel)
 
 

@@ -1,6 +1,6 @@
 import uuid
 
-from sqlalchemy import Column, Index, Text, String
+from sqlalchemy import Column, Index, String, Text
 from sqlalchemy.dialects.postgresql import UUID
 
 from .engine import BaseORM
