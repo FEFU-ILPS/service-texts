@@ -29,7 +29,7 @@ async def get_texts(
     pg: Annotated[Pagination, Depends()],
     db: Annotated[AsyncSession, Depends(get_db)],
 ) -> PaginatedResponse[LearningTextResponse]:
-    """Возвращает полный список всех обучающих текстов с краткой информацией."""
+    """Постранично возвращает список всех обучающих текстов."""
     stmt = select(LearningText).offset(pg.skip).limit(pg.size)
     result = await db.execute(stmt)
     texts = result.scalars().all()
