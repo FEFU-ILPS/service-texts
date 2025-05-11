@@ -1,8 +1,8 @@
-from typing import Annotated, List
+from typing import Annotated
 from uuid import UUID
 
 from fastapi import APIRouter, Body, Depends, HTTPException, Path, status
-from sqlalchemy import select
+from sqlalchemy import select, func
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -18,27 +18,40 @@ from schemas import (
     UpdateLearningTextResponse,
 )
 
+from .utils.pagination import PaginatedResponse, Pagination
+
 
 router = APIRouter()
 
 
 @router.get("/", summary="Получить список всех текстов")
-async def get_texts(db: AsyncSession = Depends(get_db)) -> List[LearningTextResponse]:
+async def get_texts(
+    pg: Annotated[Pagination, Depends()],
+    db: Annotated[AsyncSession, Depends(get_db)],
+) -> PaginatedResponse[LearningTextResponse]:
     """Возвращает полный список всех обучающих текстов с краткой информацией."""
-    stmt = select(LearningText)
+    stmt = select(LearningText).offset(pg.skip).limit(pg.size)
     result = await db.execute(stmt)
     texts = result.scalars().all()
 
+    stmt = select(func.count()).select_from(LearningText)
     result = await db.execute(stmt)
-    texts = result.scalars().all()
+    total = result.scalar_one()
 
-    return [LearningTextResponse.model_validate(text) for text in texts]
+    items = [LearningTextResponse.model_validate(text) for text in texts]
+
+    return PaginatedResponse[LearningTextResponse](
+        items=items,
+        page=pg.page,
+        size=pg.size,
+        total=total,
+    )
 
 
 @router.get("/{uuid}", summary="Получить детальную информацию о тексте")
 async def get_text(
     uuid: Annotated[UUID, Path(...)],
-    db: AsyncSession = Depends(get_db),
+    db: Annotated[AsyncSession, Depends(get_db)],
 ) -> DetailLearningTextResponse:
     """Возвращает полную информацию о конкретном тексте по его UUID."""
     stmt = select(LearningText).where(LearningText.id == uuid)
@@ -57,7 +70,7 @@ async def get_text(
 @router.post("/", summary="Добавить текст в систему")
 async def create_text(
     data: Annotated[CreateLearningTextRequest, Body(...)],
-    db: AsyncSession = Depends(get_db),
+    db: Annotated[AsyncSession, Depends(get_db)],
 ) -> CreateLearningTextResponse:
     """Добавляет новый текст в систему."""
 
@@ -91,7 +104,7 @@ async def create_text(
 @router.delete("/{uuid}", summary="Удалить текст из системы")
 async def delete_text(
     uuid: Annotated[UUID, Path(...)],
-    db: AsyncSession = Depends(get_db),
+    db: Annotated[AsyncSession, Depends(get_db)],
 ) -> DeleteLearningTextResponse:
     """Удаляет текст из системы по его UUID."""
     stmt = select(LearningText).where(LearningText.id == uuid)
@@ -114,7 +127,7 @@ async def delete_text(
 async def update_text(
     uuid: Annotated[UUID, Path(...)],
     data: Annotated[UpdateLearningTextRequest, Body(...)],
-    db: AsyncSession = Depends(get_db),
+    db: Annotated[AsyncSession, Depends(get_db)],
 ) -> UpdateLearningTextResponse:
     """Обновляет данные текста по его UUID."""
     stmt = select(LearningText).where(LearningText.id == uuid)
