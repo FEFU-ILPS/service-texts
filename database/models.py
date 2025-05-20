@@ -7,7 +7,7 @@ from .engine import BaseORM
 
 
 class LearningText(BaseORM):
-    """ORM таблицы, содержащей информацию по обучающим текстам."""
+    """ORM модель, описывающая обучающий текст."""
 
     __tablename__ = "learning_texts"
 

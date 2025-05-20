@@ -87,14 +87,14 @@ async def create_text(
         await db.rollback()
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"{LearningText.__name__} with this data already exists.",
+            detail="Text with this data already exists.",
         )
 
     except Exception:
         await db.rollback()
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"An error ocured while creating {LearningText.__name__}.",
+            detail="An error ocured while creating text.",
         )
 
     return CreateLearningTextResponse.model_validate(text)
@@ -152,14 +152,14 @@ async def update_text(
         await db.rollback()
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"{LearningText.__name__} with this data already exists.",
+            detail="Text with this data already exists.",
         )
 
     except Exception:
         await db.rollback()
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"An error ocured while updating {LearningText.__name__}.",
+            detail="An error ocured while updating text.",
         )
 
     return UpdateLearningTextResponse.model_validate(text)
