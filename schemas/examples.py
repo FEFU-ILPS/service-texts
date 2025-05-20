@@ -12,16 +12,9 @@ TITLE_EXAMPLES: Final[list[str]] = [
 ]
 
 VALUE_EXAMPLES: Final[list[str]] = [
-    (
-        "School later when imagine. Push effort consider shoulder.\n"
-        "Meet institution yes tend. Check order food reach wait friend.\n"
-        "Real stop scientist heart window safe."
-    ),
-    (
-        "Third president billion measure. Same player government check can business. "
-        "Kitchen like develop admit most.\nLight red writer. Others field as pressure "
-        "question movement ask pretty."
-    ),
+    "I assume moisture will damage this ship's hull.",
+    "Roy ignored the spurious data points in drawing the graph.",
+    "Are holiday aprons available to us?",
 ]
 
 TRANSCRIPTION_EXAMPLES: Final[list[str]] = [
