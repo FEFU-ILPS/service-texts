@@ -1,6 +1,7 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from .database import DatabaseConfiguration
+from .graylog import GraylogConfiguration
 
 
 class ProjectConfiguration(BaseSettings):
@@ -8,6 +9,7 @@ class ProjectConfiguration(BaseSettings):
 
     # * Вложенные группы настроек
     database: DatabaseConfiguration = DatabaseConfiguration()
+    graylog: GraylogConfiguration = GraylogConfiguration()
 
     # * Опциональные переменные
     DEBUG_MODE: bool = True
